@@ -14,6 +14,79 @@ class TweetCellTableViewCell: UITableViewCell {
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var tweetContent: UILabel!
 
+    @IBOutlet weak var retweetButton: UIButton!
+    @IBOutlet weak var favButton: UIButton!
+    
+    
+    var favorited:Bool = false
+    var tweetID:Int = -1
+    
+//    var unretweeted:Bool = false
+    
+    @IBAction func favoriteTweet(_ sender: Any) {
+        let toBeFavorited = !favorited
+        if (toBeFavorited) {
+            TwitterAPICaller.client?.favoriteTweet(tweetId: tweetID, success: { self.setFavorite(true)}, failure: { (error) in
+                print("Favorite did not succeed: \(error)")
+            })
+                      } else {
+                          TwitterAPICaller.client?.unfavoriteTweet(tweetId: tweetID, success: { self.setFavorite(false)}, failure: { (error) in
+                        print("unfavorite did not succeed: \(error)")
+                })
+                    }
+    }
+        
+    @IBAction func retweet(_ sender: Any) {
+        TwitterAPICaller.client?.retweet(tweetId: tweetID, success: {self.setRetweeted(true)}, failure: { (error) in
+                print("Error in retweeting: \(error)")
+        })
+    }
+
+    
+    
+//    @IBAction func retweet(_ sender: Any) {
+//        let toBeUnretweeted = !unretweeted
+//        if (toBeUnretweeted) {
+//            TwitterAPICaller.client?.retweet(tweetId: tweetID, success: { self.setRetweeted(true)}, failure: { (error) in
+//                print("retweet did not succeed: \(error)")
+//            })
+//                      } else {
+//                          TwitterAPICaller.client?.unretweet(tweetId: tweetID, success: { self.setRetweeted(false)}, failure: { (error) in
+//                        print("unretweet did not succeed: \(error)")
+//                })
+//                    }
+//    }
+        
+    
+    func setRetweeted(_ isRetweeted:Bool) {
+        if (isRetweeted) {
+            retweetButton.setImage(UIImage(named: "retweet-icon-green"), for: UIControl.State.normal)
+            retweetButton.isEnabled = false
+        } else {
+            retweetButton.setImage(UIImage(named: "retweet-icon"), for: UIControl.State.normal)
+            retweetButton.isEnabled = true
+        }
+    }
+
+//    func setRetweeted(_ isRetweeted:Bool) {
+//        unretweeted = isRetweeted
+//        if (unretweeted) {
+//            retweetButton.setImage(UIImage(named: "retweet-icon-green"), for: UIControl.State.normal)
+//            retweetButton.isEnabled = false
+//        } else {
+//            retweetButton.setImage(UIImage(named: "retweet-icon"), for: UIControl.State.normal)
+//            retweetButton.isEnabled = true
+//        }
+//    }
+  
+    func setFavorite(_ isFavorite:Bool) {
+        favorited =  isFavorite
+        if (favorited) {
+            favButton.setImage(UIImage(named: "favor-icon-red"), for:  UIControl.State.normal)
+        } else {
+            favButton.setImage(UIImage(named: "favor-icon"), for: UIControl.State.normal)
+        }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
